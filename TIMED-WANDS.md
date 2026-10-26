@@ -25,8 +25,12 @@ javac -d target/timer-tests src/main/java/com/artillexstudios/axsellwands/timing
 java -cp target/timer-tests com.artillexstudios.axsellwands.timing.WandDurationTest
 ```
 
-Full build: `mvn -B package`. The inherited source requires private/local hook API JARs in `libs/` as specified by pom.xml; these are not distributed by this repository. A full build requires those original dependencies.
+Release build (Python 3 and JDK 21): `python scripts/build-release.py`.
 
-Server acceptance checks: issue a 1h wand, observe seconds decrease, move it to a chest and reopen later, restart and rejoin, and verify its original expiration persists after selling. Check expired selling/inspection, existing untimed wands, stacking modes and shulker storage. These require a Minecraft server and the hook dependencies.
+The build downloads the official AxSellwands 1.15.0 release and compile dependencies, verifies their pinned SHA-256 hashes, and recompiles every core plugin class from this fork. It retains the official release's bundled libraries and unchanged optional integration classes, avoiding the private/local hook API JARs required by the inherited Maven configuration. The integration sources were compared against upstream tag `1.15.0` and are identical. The script refuses to build if those integration sources change. It packages current resources, runs duration/deadline regression checks, verifies JAR integrity, and writes a SHA-256 checksum. Spigot and Adventure compile APIs are not added to the plugin JAR.
 
-Validation performed: the dependency-free duration/deadline checks passed, and the timer plus give-command classes compiled against the declared AxAPI and Spigot APIs using a minimal plugin bootstrap stand-in. The full Maven build was attempted and failed during dependency resolution because the inherited local hook JARs are absent (including CMI/CMILib, CoinsEngine, ExcellentEconomy, RoyaleEconomy, Residence, KingdomsX, IridiumSkyblock, DynamicShop and LockettePro). No runnable plugin JAR or live server verification is claimed.
+Output: `target/AxSellwands-1.15.0-timed.1.jar` and its `.jar.sha256` file. The packaged plugin version matches pom.xml. The original `mvn -B package` path still requires the local hook API JARs declared in pom.xml.
+
+Validation performed: all core plugin classes compile against the actual bundled APIs, the duration/deadline regression checks pass, ZIP integrity passes, the plugin descriptor has the release version, and reused integration/library bytes match the verified official release. Live Minecraft server testing has not been performed.
+
+Server acceptance checks: issue a 1h wand, observe seconds decrease, move it to a chest and reopen later, restart and rejoin, and verify its original expiration persists after selling. Check expired selling/inspection, existing untimed wands, stacking modes and shulker storage.
