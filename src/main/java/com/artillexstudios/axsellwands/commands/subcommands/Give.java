@@ -4,6 +4,8 @@ import com.artillexstudios.axapi.items.NBTWrapper;
 import com.artillexstudios.axapi.utils.ContainerUtils;
 import com.artillexstudios.axapi.utils.ItemBuilder;
 import com.artillexstudios.axsellwands.sellwands.Sellwand;
+import com.artillexstudios.axsellwands.timing.WandTimer;
+import com.artillexstudios.axsellwands.timing.WandDuration;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -22,7 +24,15 @@ import static com.artillexstudios.axsellwands.AxSellwands.MESSAGEUTILS;
 public enum Give {
     INSTANCE;
 
-    public void execute(CommandSender sender, Player player, @NotNull Sellwand sellwand, @Nullable Integer amount) {
+    public void execute(CommandSender sender, Player player, @NotNull Sellwand sellwand, String time, @Nullable Integer amount) {
+        final long expiresAt;
+        try {
+            expiresAt = Math.addExact(System.currentTimeMillis(), WandDuration.parseMillis(time));
+        } catch (IllegalArgumentException | ArithmeticException ex) {
+            sender.sendMessage(com.artillexstudios.axapi.utils.StringUtils.formatToString(
+                    LANG.getString("invalid-time", "&cInvalid time. Use positive whole hours or days, such as 1h, 24h or 2d.")));
+            return;
+        }
         float multiplier = sellwand.getMultiplier();
         int uses = sellwand.getUses();
 
@@ -44,6 +54,11 @@ public enum Give {
         wrapper.set("axsellwands-max-uses", uses);
         wrapper.set("axsellwands-sold-amount", 0);
         wrapper.set("axsellwands-sold-price", 0D);
+
+        wrapper.build();
+        WandTimer.setExpiration(it, expiresAt);
+        WandTimer.refresh(it, System.currentTimeMillis());
+        wrapper = new NBTWrapper(it);
 
         int am = 1;
         if (amount != null) am = amount;

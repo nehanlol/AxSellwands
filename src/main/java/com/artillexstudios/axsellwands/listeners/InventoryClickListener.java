@@ -48,6 +48,14 @@ public class InventoryClickListener implements Listener {
             return;
         }
 
+        // Timed wands cannot be merged: merging must never reset or transfer a deadline.
+        if (com.artillexstudios.axsellwands.timing.WandTimer.getExpiration(event.getCurrentItem()) != null
+                || com.artillexstudios.axsellwands.timing.WandTimer.getExpiration(event.getCursor()) != null) {
+            event.setCancelled(true);
+            MESSAGEUTILS.sendLang(player, "stack.cant-stack");
+            return;
+        }
+
         int uses1 = wrapperCurrent.getIntOr("axsellwands-uses", -1);
         if (uses1 == -1) {
             MESSAGEUTILS.sendLang(player, "stack.cant-stack");

@@ -4,7 +4,7 @@ help:
   - " "
   - "<gradient:#FF5500:#FF7700><b>AxSellwands</b></gradient> <#FFAA00>Help"
   - " <#FFAA00>➤ <white>/axsellwands reload <#DDDDDD>| <#FFCC00>Reload plugin"
-  - " <#FFAA00>➤ <white>/axsellwands give <player> <sellwand> [amount] <#DDDDDD>| <#FFCC00>Give sellwands"
+  - " <#FFAA00>➤ <white>/axsellwands give <player> <sellwand> <time> [amount] <#DDDDDD>| <#FFCC00>Give sellwands"
   - " "
 
 unlimited: "∞"
@@ -77,4 +77,8 @@ commands:
 update-notifier: "&#FFAA00There is a new version of AxSellwands available! &#DDDDDD(&#FFFFFFcurrent: &#FF0000%current% &#DDDDDD| &#FFFFFFlatest: &#00FF00%latest%&#DDDDDD)"
 
 # do not change this
-version: 4
+version: 5
+invalid-time: "&cInvalid time. Use positive whole hours or days: 1h, 24h, 1d, 2d."
+sellwand-expired: "&cThis sellwand has expired!"
+timer-lore: "&7Time left: &e%time%"
+timer-expired: "&cExpired"

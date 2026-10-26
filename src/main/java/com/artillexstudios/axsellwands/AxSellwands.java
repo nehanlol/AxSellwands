@@ -64,6 +64,7 @@ public final class AxSellwands extends AxPlugin {
         }
 
         Sellwands.reload();
+        com.artillexstudios.axsellwands.timing.WandTimer.start();
         getServer().getPluginManager().registerEvents(new SellwandUseListener(), this);
         getServer().getPluginManager().registerEvents(new CraftListener(), this);
         getServer().getPluginManager().registerEvents(new InventoryClickListener(), this);
@@ -78,6 +79,7 @@ public final class AxSellwands extends AxPlugin {
     }
 
     public void disable() {
+        com.artillexstudios.axsellwands.timing.WandTimer.stop();
         if (metrics != null) metrics.cancel();
     }
 

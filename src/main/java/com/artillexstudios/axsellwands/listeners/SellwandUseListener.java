@@ -6,6 +6,7 @@ import com.artillexstudios.axapi.utils.ItemBuilder;
 import com.artillexstudios.axapi.utils.StringUtils;
 import com.artillexstudios.axapi.utils.Title;
 import com.artillexstudios.axsellwands.api.events.AxSellwandsSellEvent;
+import com.artillexstudios.axsellwands.timing.WandTimer;
 import com.artillexstudios.axsellwands.hooks.HookManager;
 import com.artillexstudios.axsellwands.hooks.container.ContainerHook;
 import com.artillexstudios.axsellwands.sellwands.Sellwand;
@@ -52,6 +53,13 @@ public class SellwandUseListener implements Listener {
         event.setCancelled(true);
         if (sellwand == null) return;
         Player player = event.getPlayer();
+
+        Long expiresAt = WandTimer.getExpiration(event.getItem());
+        if (expiresAt != null && expiresAt <= System.currentTimeMillis()) {
+            WandTimer.refresh(event.getItem(), System.currentTimeMillis());
+            player.sendMessage(StringUtils.formatToString(LANG.getString("sellwand-expired", "&cThis sellwand has expired!")));
+            return;
+        }
 
         ItemStack[] contents;
         ContainerHook containerHook = HookManager.getContainerAt(player, block);
@@ -228,6 +236,8 @@ public class SellwandUseListener implements Listener {
             wrapper.set("axsellwands-multiplier", multiplier);
             wrapper.set("axsellwands-max-uses", maxUses);
             wrapper.build();
+            if (expiresAt != null) WandTimer.setExpiration(event.getItem(), expiresAt);
+            WandTimer.refresh(event.getItem(), System.currentTimeMillis());
 
             if (block.getState() instanceof Container container) container.update();
         } else {
